@@ -8,6 +8,8 @@ namespace Arcade.VfxAuthor.Editor
 {
     public sealed class DirectAuthorWindow : EditorWindow
     {
+        enum Coverage { FromPrompt, LocalVolume, GlobalAroundCamera }
+        [SerializeField] Coverage coverage;
         [SerializeField] string prompt = "";
         [SerializeField] string model = DirectApi.DefaultModel;
         [NonSerialized] static string apiKey;
@@ -69,7 +71,12 @@ namespace Arcade.VfxAuthor.Editor
                 SessionState.SetString("DirectVFX.LastJob", job);
                 AssemblyReloadEvents.beforeAssemblyReload += Interrupt;
                 EditorApplication.quitting += Interrupt;
-                await DirectAuthorJob.Run(job, prompt.Trim(), key.Trim(), model.Trim(), DirectApi.Client, cancel.Token);
+                string brief = prompt.Trim();
+                if (coverage == Coverage.GlobalAroundCamera)
+                    brief += "\nPlacement: global around the camera by default. Support switching to a local volume in the prefab Inspector.";
+                else if (coverage == Coverage.LocalVolume)
+                    brief += "\nPlacement: keep the effect local to its authored transform by default.";
+                await DirectAuthorJob.Run(job, brief, key.Trim(), model.Trim(), DirectApi.Client, cancel.Token);
             }
             catch (Exception ex)
             {
@@ -95,6 +102,8 @@ namespace Arcade.VfxAuthor.Editor
             prompt = EditorGUILayout.TextArea(prompt, GUILayout.MinHeight(62));
             if (string.IsNullOrWhiteSpace(prompt) && GUILayout.Button("Try an example prompt"))
                 prompt = "A moon jelly pulses through dark water. Its translucent blue bell contracts, then its fine pink tentacles catch up.";
+            coverage = (Coverage)EditorGUILayout.EnumPopup(new GUIContent("Coverage",
+                "Choose how the generated prefab occupies the scene. Global keeps an effect volume around a moving camera."), coverage);
             string environmentKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             apiKey = EditorGUILayout.PasswordField("OpenAI API key", apiKey ?? "");
             string key = string.IsNullOrWhiteSpace(apiKey) ? environmentKey : apiKey;

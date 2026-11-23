@@ -46,8 +46,11 @@ public static class PromptVfxStudioHarness
             build.Invoke(null, null);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            if (!AssetDatabase.LoadAssetAtPath<GameObject>(Folder + "/Effect.prefab"))
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Folder + "/Effect.prefab");
+            if (!prefab)
                 throw new InvalidOperationException("Builder did not save " + Folder + "/Effect.prefab.");
+            if (!prefab.GetComponents<MonoBehaviour>().Any(HasEffectSettings))
+                throw new InvalidOperationException("Add a generated runtime component to the prefab root. Expose visible serialized artist controls for the effect and wire them to its playback.");
             foreach (var guid in AssetDatabase.FindAssets("t:Shader", new[] { Folder }))
             {
                 var shader = AssetDatabase.LoadAssetAtPath<Shader>(AssetDatabase.GUIDToAssetPath(guid));
@@ -58,6 +61,22 @@ public static class PromptVfxStudioHarness
             EditorApplication.EnterPlaymode();
         }
         catch (Exception error) { Fail(error); }
+    }
+
+    static bool HasEffectSettings(MonoBehaviour component)
+    {
+        if (!component) return false;
+        var script = MonoScript.FromMonoBehaviour(component);
+        if (!AssetDatabase.GetAssetPath(script).StartsWith(Folder + "/", StringComparison.Ordinal)) return false;
+        using var serialized = new SerializedObject(component);
+        var field = serialized.GetIterator();
+        if (!field.NextVisible(true)) return false;
+        do
+        {
+            if (!field.propertyPath.StartsWith("m_", StringComparison.Ordinal) && field.editable)
+                return true;
+        } while (field.NextVisible(false));
+        return false;
     }
 
     static void Capture()
@@ -82,6 +101,7 @@ public static class PromptVfxStudioHarness
                 startFrame = Time.frameCount;
             }
             if (Time.frameCount - startFrame < Frames[tile]) return;
+            if (tile == Frames.Length - 1) cam.backgroundColor = new Color(.5f, .52f, .55f);
             cam.Render();
             var oldTarget = RenderTexture.active;
             RenderTexture.active = target;
@@ -91,8 +111,15 @@ public static class PromptVfxStudioHarness
             SessionState.SetBool(Active, false);
             sheet.Apply();
             var pixels = sheet.GetPixels32();
-            var background = pixels[0];
-            int visible = pixels.Count(p => Math.Abs(p.r-background.r) + Math.Abs(p.g-background.g) + Math.Abs(p.b-background.b) > 30);
+            int visible = 0;
+            for (int y = 0; y < Height * 2; y++)
+                for (int x = 0; x < Width * 2; x++)
+                {
+                    var pixel = pixels[y * Width * 2 + x];
+                    var background = pixels[(y / Height * Height) * Width * 2 + x / Width * Width];
+                    if (Math.Abs(pixel.r-background.r) + Math.Abs(pixel.g-background.g) + Math.Abs(pixel.b-background.b) > 30)
+                        visible++;
+                }
             if (visible < Width * Height / 300) throw new InvalidOperationException("Unity captured an effectively blank frame sheet. Fix framing or shading.");
             File.WriteAllBytes(Path.Combine(Output, "frames.jpg"), sheet.EncodeToJPG(93));
             // Omit author-time builder code. Runtime scripts and all native effect assets travel together.
