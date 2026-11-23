@@ -1,0 +1,12 @@
+.DS_Store
+*.tgz
+*.unitypackage
+.env
+.env.*
+Library/
+Temp/
+Logs/
+UserSettings/
+obj/
+*.csproj
+*.sln

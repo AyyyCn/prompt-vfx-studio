@@ -1,0 +1,201 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,31}$"
+          },
+          "sprite": {
+            "type": "string",
+            "enum": [
+              "glow",
+              "ring",
+              "shard",
+              "streak"
+            ],
+            "default": "glow"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "shape": {
+            "type": "string",
+            "enum": [
+              "point",
+              "circle",
+              "box"
+            ],
+            "default": "point"
+          },
+          "profile": {
+            "type": "string",
+            "enum": [
+              "steady",
+              "grow",
+              "shrink",
+              "pulse"
+            ],
+            "default": "shrink"
+          },
+          "delay": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 6,
+            "default": 0,
+            "description": "First emission in seconds."
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 8,
+            "default": 1,
+            "description": "Seconds of emission and emitter travel."
+          },
+          "lifetime": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 6,
+            "default": 1,
+            "description": "Particle lifetime in seconds."
+          },
+          "rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 160,
+            "default": 0,
+            "description": "Continuous particles per second."
+          },
+          "radius": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 0,
+            "description": "Spawn circle radius or box half-size in units."
+          },
+          "size": {
+            "type": "number",
+            "minimum": 0.015,
+            "maximum": 5,
+            "default": 0.2,
+            "description": "Diameter in world units; ring is a single billboard graphic."
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 1,
+            "default": 1,
+            "description": "Peak opacity."
+          },
+          "radial": {
+            "type": "number",
+            "minimum": -4,
+            "maximum": 4,
+            "default": 0,
+            "description": "Signed radial velocity from emitter in units per second."
+          },
+          "vx": {
+            "type": "number",
+            "minimum": -4,
+            "maximum": 4,
+            "default": 0,
+            "description": "Particle velocity X; independent of emitter travel."
+          },
+          "vy": {
+            "type": "number",
+            "minimum": -4,
+            "maximum": 4,
+            "default": 0,
+            "description": "Particle velocity Y."
+          },
+          "noise": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "default": 0,
+            "description": "Turbulence strength."
+          },
+          "spin": {
+            "type": "number",
+            "minimum": -360,
+            "maximum": 360,
+            "default": 0,
+            "description": "Sprite rotation degrees per second."
+          },
+          "x": {
+            "type": "number",
+            "minimum": -4,
+            "maximum": 4,
+            "default": 0,
+            "description": "Initial emitter X."
+          },
+          "y": {
+            "type": "number",
+            "minimum": -3,
+            "maximum": 3,
+            "default": 0,
+            "description": "Initial emitter Y."
+          },
+          "travelX": {
+            "type": "number",
+            "minimum": -7,
+            "maximum": 7,
+            "default": 0,
+            "description": "Horizontal emitter displacement across duration; world particles stay behind."
+          },
+          "travelY": {
+            "type": "number",
+            "minimum": -5,
+            "maximum": 5,
+            "default": 0,
+            "description": "Vertical emitter displacement across duration."
+          },
+          "arc": {
+            "type": "number",
+            "minimum": -2,
+            "maximum": 2,
+            "default": 0,
+            "description": "Vertical curvature of emitter trajectory."
+          },
+          "trail": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0,
+            "description": "Fraction of a particle lifetime retained as a ribbon trail; zero disables it."
+          },
+          "burst": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 180,
+            "default": 0,
+            "description": "Particles spawned together at first emission."
+          }
+        },
+        "required": [
+          "id",
+          "sprite",
+          "color"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "name",
+    "layers"
+  ],
+  "additionalProperties": false
+}

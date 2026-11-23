@@ -1,0 +1,30 @@
+{
+  "name": "com.arcade.vfx-author",
+  "version": "0.5.1",
+  "displayName": "Prompt VFX Studio",
+  "description": "Generate an original Unity VFX prefab from a prompt. Review two rendered drafts and import your choice.",
+  "unity": "6000.3",
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.modules.particlesystem": "1.0.0",
+    "com.unity.render-pipelines.universal": "17.3.0"
+  },
+  "samples": [
+    {
+      "displayName": "Legacy particle examples",
+      "description": "Original and revised portal, comet and ember prefabs generated with the plugin.",
+      "path": "Samples~/Generated Effects"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AyyyCn/prompt-vfx-studio.git"
+  },
+  "documentationUrl": "https://github.com/AyyyCn/prompt-vfx-studio#readme",
+  "keywords": [
+    "vfx",
+    "shaders",
+    "urp",
+    "editor"
+  ]
+}

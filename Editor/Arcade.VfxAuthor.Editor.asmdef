@@ -1,0 +1,1 @@
+{ "name": "Arcade.VfxAuthor.Editor", "references": ["Arcade.VfxAuthor", "Unity.Newtonsoft.Json"], "includePlatforms": ["Editor"] }

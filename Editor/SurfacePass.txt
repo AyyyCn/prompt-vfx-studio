@@ -1,0 +1,43 @@
+Shader "Prompt VFX/Generated/__KEY__"
+{
+ SubShader
+ {
+  Tags { "Queue"="Transparent" "RenderType"="Transparent" "RenderPipeline"="UniversalPipeline" }
+  Pass
+  {
+   Cull Off ZWrite Off Blend __BLEND__
+   HLSLPROGRAM
+   #pragma target 3.5
+   #pragma vertex SurfaceVert
+   #pragma fragment SurfaceFrag
+   #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+   #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+   float _EffectTime;
+   __HELPERS__
+   float3 Form(float2 uv,float t,float id,float count) {
+   __FORM__
+   }
+   float4 Ink(float2 uv,float3 p,float t,float id,float count,float3 viewDir) {
+   __INK__
+   }
+   struct SurfaceInput {float4 pos:POSITION;float2 uv:TEXCOORD0;float2 copy:TEXCOORD1;};
+   struct SurfaceOutput {float4 pos:SV_POSITION;float2 uv:TEXCOORD0;float2 copy:TEXCOORD1;float3 local:TEXCOORD2;};
+   SurfaceOutput SurfaceVert(SurfaceInput v) {
+    SurfaceOutput o;
+    o.local=Form(v.uv,_EffectTime,v.copy.x,v.copy.y);
+    o.pos=TransformObjectToHClip(o.local);o.uv=v.uv;o.copy=v.copy;
+    return o;
+   }
+   float4 SurfaceFrag(SurfaceOutput i):SV_Target {
+    float3 dir=TransformWorldToObjectDir(GetWorldSpaceNormalizeViewDir(TransformObjectToWorld(i.local)));
+    float4 c=Ink(i.uv,i.local,_EffectTime,i.copy.x,i.copy.y,dir);
+    c.rgb=clamp(c.rgb,0,8);c.a=saturate(c.a);
+    #ifndef UNITY_COLORSPACE_GAMMA
+    c.rgb=SRGBToLinear(c.rgb);
+    #endif
+    return c;
+   }
+   ENDHLSL
+  }
+ }
+}
