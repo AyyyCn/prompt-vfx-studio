@@ -15,18 +15,18 @@ Use a **Unity 6.3 Universal Render Pipeline (URP)** project. The editor needs a 
 3. Paste the versioned URL and click **Install**.
 
 ```text
-https://github.com/AyyyCn/prompt-vfx-studio.git#v0.5.1
+https://github.com/AyyyCn/prompt-vfx-studio.git#v0.5.2
 ```
 
-For an installation without Git, download the [package tarball](https://github.com/AyyyCn/prompt-vfx-studio/releases/download/v0.5.1/com.arcade.vfx-author-0.5.1.tgz). Choose **Install package from tarball** and select the downloaded file.
+For an installation without Git, download the [package tarball](https://github.com/AyyyCn/prompt-vfx-studio/releases/download/v0.5.2/com.arcade.vfx-author-0.5.2.tgz). Choose **Install package from tarball** and select the downloaded file.
 
 ## Make your first effect
 
 1. Open **Window → VFX → Prompt VFX Studio**. Paste your OpenAI API key into the masked field. Alternatively, launch the editor with `OPENAI_API_KEY` set. A pasted key stays in editor memory.
 2. Describe what the effect looks like and how it moves. **Try an example prompt** fills the brief with an editable jellyfish example.
 3. Click **Generate effect**. Unity starts a second editor, compiles the generated code and captures four moments from the animation. The model can repair compiler errors and revise what it sees.
-4. Compare **First draft** and **Visual revision**. Click **Review and import this prefab** and confirm the Unity import dialog.
-5. Find `Effect.prefab` inside the new `Assets/VfxStudio_…` folder. Drag it into your scene and enter Play Mode. Its runtime scripts, materials and shaders travel with it. Playback works offline.
+4. Compare **First draft** and **Visual revision**. Click **Import first draft and select prefab** or **Import visual revision and select prefab**. If assets from this job already exist, Unity asks before replacing them.
+5. Unity highlights `Effect.prefab` in the Project window. **Select existing prefab in Project** highlights it again. Drag it into your scene and enter Play Mode. Its runtime scripts, materials and shaders travel with it. Playback works offline.
 
 ## What runs and what gets sent
 

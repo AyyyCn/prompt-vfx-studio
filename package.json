@@ -1,6 +1,6 @@
 {
   "name": "com.arcade.vfx-author",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "displayName": "Prompt VFX Studio",
   "description": "Generate an original Unity VFX prefab from a prompt. Review two rendered drafts and import your choice.",
   "unity": "6000.3",

@@ -31,6 +31,7 @@ namespace Arcade.VfxAuthor.Editor
             Directory.CreateDirectory(Path.Combine(scratch,"ProjectSettings"));
             File.WriteAllText(Path.Combine(job,"prompt.txt"), prompt);
             File.WriteAllText(Path.Combine(job,"scratch.txt"), scratch);
+            File.WriteAllText(Path.Combine(job,"prefab-path.txt"), "Assets/" + token + "/Effect.prefab");
             File.WriteAllText(Path.Combine(scratch,"ProjectSettings/ProjectVersion.txt"), "m_EditorVersion: " + Application.unityVersion + "\n");
             var deps = new JObject { ["com.unity.render-pipelines.universal"] = urp, ["com.unity.modules.particlesystem"] = "1.0.0" };
             File.WriteAllText(Path.Combine(scratch,"Packages/manifest.json"), new JObject { ["dependencies"] = deps }.ToString());

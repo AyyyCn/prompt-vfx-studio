@@ -17,6 +17,7 @@ namespace Arcade.VfxAuthor.Editor
         [SerializeField] int selected;
         Texture2D preview;
         string previewPath, status = "", error = "";
+        string cachedJob, prefabPath;
         Vector2 scroll;
         bool modelSettings;
         double nextPoll;
@@ -129,8 +130,30 @@ namespace Arcade.VfxAuthor.Editor
                         previewPath = file;
                     }
                     GUI.DrawTexture(EditorGUILayout.GetControlRect(false, Mathf.Max(150, (position.width-24) * 9/16f)), preview, ScaleMode.ScaleToFit);
-                    if (GUILayout.Button("Review and import this prefab"))
-                        AssetDatabase.ImportPackage(Path.Combine(folder,"Effect.unitypackage"), true);
+                    if (cachedJob != job)
+                    {
+                        prefabPath = DraftImport.PrefabPath(job);
+                        cachedJob = job;
+                    }
+                    var prefab = string.IsNullOrEmpty(prefabPath) ? null : AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                    var label = selected == 0 ? "first draft" : "visual revision";
+                    using (new EditorGUI.DisabledScope(DraftImport.Busy || active != null || EditorApplication.isPlayingOrWillChangePlaymode))
+                    {
+                        if (GUILayout.Button("Import " + label + " and select prefab"))
+                        {
+                            bool existingFolder = !string.IsNullOrEmpty(prefabPath) &&
+                                AssetDatabase.IsValidFolder(Path.GetDirectoryName(prefabPath).Replace('\\', '/'));
+                            if (!existingFolder || EditorUtility.DisplayDialog("Import " + label + "?",
+                                "This job already has assets in the project. Importing the selected draft can replace files in " +
+                                Path.GetDirectoryName(prefabPath) + ".", "Import selected draft", "Cancel"))
+                                DraftImport.Begin(job, selected + 1, prefabPath);
+                        }
+                    }
+                    if (active != null) EditorGUILayout.LabelField("Finish or cancel generation before importing.", EditorStyles.wordWrappedMiniLabel);
+                    if (EditorApplication.isPlayingOrWillChangePlaymode) EditorGUILayout.LabelField("Exit Play Mode to import.", EditorStyles.miniLabel);
+                    string notice = DraftImport.Notice(job);
+                    if (notice.Length > 0) EditorGUILayout.HelpBox(notice, MessageType.Info);
+                    if (prefab && GUILayout.Button("Select existing prefab in Project")) DraftImport.Select(prefab);
                 }
                 if (GUILayout.Button("Show job files")) EditorUtility.RevealInFinder(job);
             }
